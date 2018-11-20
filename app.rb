@@ -8,7 +8,7 @@ class BookmarkManager < Sinatra::Base
 
   get '/bookmarks' do
     @booklist = Bookmark.list_of_bookmarks
-    erb(:bookmark)
+    erb(:"bookmarks/index")
   end
 
   get '/bookmarks/new' do
