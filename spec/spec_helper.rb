@@ -1,10 +1,10 @@
-require_relative './spec_test_database'
+require_relative './spec_test_database.rb'
 
 ENV['ENVIRONMENT'] = 'test'
 
 RSpec.configure do |config|
   config.before(:each) do
-    './spec_test_database'
+    spec_test_database
   end
 end
 
