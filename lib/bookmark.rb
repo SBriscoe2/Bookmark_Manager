@@ -1,4 +1,5 @@
 require 'pg'
+require 'uri'
 
 class Bookmark
   attr_reader :id, :title, :url
@@ -21,7 +22,12 @@ class Bookmark
   end
 
   def self.create(url:, title:)
-      sql("INSERT INTO bookmarks (url, title) VALUES ('#{url}', '#{title}') RETURNING id, url, title;")
+    fail ("Not a valid URL") unless is_a_url?(url)
+    sql("INSERT INTO bookmarks (url, title) VALUES ('#{url}', '#{title}') RETURNING id, url, title;")
+  end
+
+  def is_a_url(url)
+    url =~ /\A#{URI::regexp(['http', 'https'])}\z/
   end
 
   def self.store(title)
@@ -38,6 +44,7 @@ class Bookmark
     sql("UPDATE bookmarks SET url = '#{url}', title = '#{title}' where title = '#{title_return}';")
     store(nil)
   end
+
   private
 
   def self.sql(query)

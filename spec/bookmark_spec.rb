@@ -25,3 +25,9 @@ describe '.create' do
     expect(bookmark['title']).to eq 'Test Bookmark'
   end
 end
+
+describe '#raise_error' do
+  it 'create an error message if an invalid url is entered' do
+    expect { Bookmark.create(url: 'htp://www.testbookmark.com', title: 'Test Bookmark') }.to raise_error "Not a valid URL"
+  end
+end
