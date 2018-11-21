@@ -21,13 +21,13 @@ class Bookmark
     sql("DELETE FROM bookmarks WHERE title = '#{name}'")
   end
 
+  # def self.create(url:, title:)
+  #   sql("INSERT INTO bookmarks (url, title) VALUES ('#{url}', '#{title}') RETURNING id, url, title;")
+  # end
   def self.create(url:, title:)
-    fail ("Not a valid URL") unless is_a_url?(url)
-    sql("INSERT INTO bookmarks (url, title) VALUES ('#{url}', '#{title}') RETURNING id, url, title;")
-  end
-
-  def is_a_url(url)
-    url =~ /\A#{URI::regexp(['http', 'https'])}\z/
+    return false unless is_url?(url)
+    result = sql("INSERT INTO bookmarks (url, title) VALUES ('#{url}', '#{title}') RETURNING id, url, title;")
+    Bookmark.new(id: result[0]['id'], title: result[0]['title'], url: result[0]['url'])
   end
 
   def self.store(title)
@@ -39,8 +39,6 @@ class Bookmark
   end
 
   def self.update(url, title)
-    p url
-    p title
     sql("UPDATE bookmarks SET url = '#{url}', title = '#{title}' where title = '#{title_return}';")
     store(nil)
   end
@@ -54,5 +52,9 @@ class Bookmark
       connection = PG.connect(dbname: 'bookmark_manager')
     end
     connection.exec(query)
+  end
+
+  def self.is_url?(url)
+    url =~ /\A#{URI::regexp(['http', 'https'])}\z/
   end
 end
